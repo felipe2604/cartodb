@@ -180,6 +180,21 @@ module Carto
       end
     end
 
+    def build_data_from_hash(exported_data, layer:)
+      build_source_from_hash(exported_data[:source], layer: layer)
+    end
+
+    def build_source_from_hash(exported_source, layer:)
+      if exported_source[:type] == 'synchronization'
+        configuration = exported_source[:configuration]
+
+        layer.user_tables.first.synchronization = Carto::Synchronization.new(
+          url: configuration[:url],
+          interval: configuration[:refresh_interval_in_seconds]
+        )
+      end
+    end
+
     def build_widget_from_hash(exported_widget, order:, layer:)
       return nil unless exported_widget
 
